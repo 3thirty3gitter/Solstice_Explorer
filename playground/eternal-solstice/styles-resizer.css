@@ -1,0 +1,35 @@
+/* Sidebar Resizer Handle */
+.sidebar-resizer {
+    width: 4px;
+    cursor: col-resize;
+    background: transparent;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    z-index: 100;
+    /* Position it relatively or strictly between items */
+    position: relative;
+}
+
+/* Hover state for discoverability */
+.sidebar-resizer:hover,
+.sidebar-resizer.resizing {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Optional: Center line */
+.sidebar-resizer::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(-50%);
+}
+
+.sidebar-resizer:hover::after,
+.sidebar-resizer.resizing::after {
+    background: var(--accent-primary);
+    box-shadow: 0 0 4px var(--accent-primary);
+}

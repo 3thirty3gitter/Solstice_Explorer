@@ -1,0 +1,101 @@
+/* ===== MODULAR SIDEBAR DESIGN ===== */
+/* This replaces the legacy .sidebar-item logic with a structured "Nav Group" approach */
+
+:root {
+    --nav-header-height: 32px;
+    --nav-indent: 16px;
+    --nav-hover-bg: rgba(255, 255, 255, 0.08);
+    --nav-active-bg: rgba(255, 255, 255, 0.15);
+    --nav-text-color: #ccc;
+    --nav-text-active: #fff;
+}
+
+/* 1. The Group Container (Hosts Header + Tree) */
+.nav-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2px;
+}
+
+/* 2. The Header (The "Button") */
+.nav-header {
+    display: flex;
+    align-items: center;
+    height: var(--nav-header-height);
+    padding: 0 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.1s ease;
+    color: var(--nav-text-color);
+    user-select: none;
+    position: relative;
+    font-size: 13px;
+}
+
+.nav-header:hover {
+    background-color: var(--nav-hover-bg);
+    color: var(--nav-text-active);
+}
+
+.nav-header.active {
+    background-color: var(--nav-active-bg);
+    color: var(--nav-text-active);
+    font-weight: 500;
+}
+
+/* Icons inside Header */
+.nav-header .nav-icon {
+    font-size: 16px;
+    margin-right: 8px;
+    width: 20px;
+    text-align: center;
+}
+
+.nav-header .nav-label {
+    flex: 1;
+    /* Pushes toggle to right if needed, or fills space */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* The Expansion Arrow (Distinct from Tree Arrows) */
+.nav-header .nav-toggle {
+    font-size: 10px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: transform 0.2s;
+}
+
+/* Rotate when group is expanded */
+.nav-group.expanded>.nav-header .nav-toggle {
+    transform: rotate(90deg);
+}
+
+/* 3. The Tree Container (The "Slot") */
+.nav-tree-container {
+    display: none;
+    /* Hidden by default */
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    margin-left: 17px;
+    /* Align with icon center */
+    padding-left: 2px;
+}
+
+.nav-group.expanded>.nav-tree-container {
+    display: block;
+}
+
+/* Loading State for Container */
+.nav-tree-container.loading::before {
+    content: "Loading...";
+    display: block;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-style: italic;
+    opacity: 0.5;
+}

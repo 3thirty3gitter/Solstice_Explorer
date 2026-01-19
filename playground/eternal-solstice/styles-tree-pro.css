@@ -1,0 +1,81 @@
+/* ===== PROFESSIONAL FILE TREE ===== */
+:root {
+    --tree-indent: 20px;
+    --tree-line-color: rgba(255, 255, 255, 0.1);
+    --tree-guide-color: rgba(255, 255, 255, 0.05);
+}
+
+.file-tree-container {
+    padding: 4px 0;
+    user-select: none;
+    outline: none;
+}
+
+/* Root Host (Custom class added by JS) */
+.tree-root-host {
+    display: block !important;
+    height: auto !important;
+    width: 100%;
+}
+
+.tree-node {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: auto !important;
+    width: 100%;
+}
+
+/* The Row (Content) */
+.tree-content {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    padding-right: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.1s;
+    color: var(--text-secondary);
+    position: relative;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+/* ... existing styles ... */
+
+/* Children Container */
+.tree-children {
+    display: none;
+    position: relative;
+    height: auto !important;
+    width: 100%;
+    margin-top: 2px;
+}
+
+.tree-children.visible {
+    display: block !important;
+}
+
+/* Animation removed to prevent visibility issues */
+
+/* Drag & Drop States */
+.tree-content.drag-over {
+    background-color: var(--glass-active);
+    border: 1px dashed var(--accent-primary);
+}
+
+/* Loading State */
+.tree-toggle.loading::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: block;
+}
+
+.tree-toggle.loading svg {
+    display: none;
+}

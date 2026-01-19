@@ -1,0 +1,173 @@
+/* Tabs Container */
+#tabs-container {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px 0 16px;
+    background: rgba(0, 0, 0, 0.2);
+    /* Slightly darker top bar */
+    height: 40px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 4px;
+    -webkit-app-region: drag;
+    /* Window dragging area */
+}
+
+/* Scrollbar hidden */
+#tabs-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Individual Tab */
+.chrome-tab {
+    display: flex;
+    align-items: center;
+    min-width: 120px;
+    max-width: 200px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px 8px 0 0;
+    padding: 0 10px;
+    cursor: pointer;
+    transition: background 0.2s, min-width 0.2s;
+    user-select: none;
+    -webkit-app-region: no-drag;
+    /* Clickable */
+    position: relative;
+    border: 1px solid transparent;
+    border-bottom: none;
+}
+
+.chrome-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.chrome-tab.active {
+    background: var(--glass-bg);
+    /* Match main explorer bg */
+    border-color: var(--glass-border);
+    z-index: 10;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.chrome-tab.active::after {
+    /* Connect to bottom */
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--glass-bg);
+    /* Mask the border */
+}
+
+.tab-icon {
+    font-size: 14px;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.tab-title {
+    flex: 1;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-secondary);
+}
+
+.chrome-tab.active .tab-title {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.tab-close {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-left: 6px;
+    opacity: 0;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.chrome-tab:hover .tab-close {
+    opacity: 0.6;
+}
+
+.tab-close:hover {
+    background: rgba(255, 0, 0, 0.5);
+    color: white;
+    opacity: 1 !important;
+}
+
+/* New Tab Button */
+#new-tab-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-secondary);
+    transition: background 0.2s;
+    -webkit-app-region: no-drag;
+}
+
+#new-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* Window Controls (Integrated in Tabs) */
+.window-controls {
+    margin-left: auto;
+    /* Push to right */
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    -webkit-app-region: no-drag;
+    height: 100%;
+    padding-left: 10px;
+}
+
+.window-btn {
+    width: 34px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.window-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.window-btn.close:hover {
+    background: #e81123;
+    /* Standard Windows Close Red */
+    color: white;
+}
+
+.window-icon {
+    width: 10px;
+    height: 10px;
+    opacity: 0.8;
+}
+
+.window-btn:hover .window-icon {
+    opacity: 1;
+}

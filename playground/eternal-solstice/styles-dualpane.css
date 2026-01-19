@@ -1,0 +1,65 @@
+/* Dual Pane View Container */
+#explorer-views {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    gap: 2px;
+    /* Gap between panes */
+}
+
+/* Single Pane (Default) */
+.explorer-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    position: relative;
+    border-right: 1px solid var(--glass-border);
+}
+
+.explorer-pane:last-child {
+    border-right: none;
+}
+
+/* Pane Focus logic */
+.explorer-pane.active-pane {
+    /* Optional: subtle glow or border to indicate active */
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.explorer-pane.inactive-pane {
+    opacity: 0.8;
+    background: rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+    /* Might be too aggressive, maybe just dim it */
+    pointer-events: auto;
+    /* Reverting, need to click to activate */
+}
+
+.explorer-pane.inactive-pane .file-grid {
+    filter: grayscale(0.5);
+}
+
+/* Splitter Handle (for resizing later) */
+.pane-splitter {
+    width: 4px;
+    background: transparent;
+    cursor: col-resize;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.pane-splitter:hover {
+    background: var(--accent-primary);
+}
+
+/* God Mode Toggle Button */
+#god-mode-btn {
+    color: var(--accent-secondary);
+}
+
+#god-mode-btn.active {
+    background: var(--accent-gradient);
+    color: white;
+}

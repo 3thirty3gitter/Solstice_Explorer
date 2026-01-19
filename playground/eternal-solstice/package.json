@@ -1,0 +1,38 @@
+{
+  "name": "eternal-solstice-explorer",
+  "version": "1.0.0",
+  "description": "A modern file explorer for Windows 10/11 with glassmorphism design",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win"
+  },
+  "keywords": [
+    "file-explorer",
+    "windows",
+    "electron",
+    "glassmorphism"
+  ],
+  "author": "Eternal Solstice",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.eternalsolstice.explorer",
+    "productName": "Eternal Solstice Explorer",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

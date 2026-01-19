@@ -1,0 +1,75 @@
+/* Zen Mode Styles */
+
+/* Base Transition for heavy hitters */
+.sidebar-root,
+.sidebar {
+    transition: width 0.4s cubic-bezier(0.2, 0, 0, 1), padding 0.4s, opacity 0.3s;
+    will-change: width, opacity;
+}
+
+/* Zen State */
+body.zen-mode .sidebar-root {
+    width: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    opacity: 0;
+    pointer-events: none;
+    border-right: none;
+}
+
+/* Main Content centering/expansion */
+body.zen-mode .main-content {
+    /* Optional: Center the grid? */
+    /* justify-content: center; */
+}
+
+/* Navbar: Fade out when not interacting */
+body.zen-mode .nav-bar {
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+    filter: grayscale(0.5);
+}
+
+body.zen-mode .nav-bar:hover,
+body.zen-mode .nav-bar:focus-within {
+    opacity: 1;
+    filter: none;
+}
+
+/* Search Bar: Fade out */
+body.zen-mode .search-container {
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+}
+
+body.zen-mode .search-container:hover,
+body.zen-mode .search-container:focus-within {
+    opacity: 1;
+}
+
+/* Optional: Zen Background */
+body.zen-mode {
+    /* subtly shift background to be calmer */
+    --zen-bg: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+}
+
+/* We can't easily animate body background image, but we can rely on opacity effects */
+
+/* Zen Button Animation */
+#zenBtn svg {
+    transition: transform 0.5s ease;
+}
+
+body.zen-mode #zenBtn svg {
+    transform: rotate(180deg);
+    color: var(--accent-primary);
+}
+
+/* Hide breadcrumb items except current folder in Zen Mode? */
+body.zen-mode .breadcrumb-item:not(.active) {
+    display: none;
+}
+
+/* Show a separator or root still? No, let's keep it minimal. */
+
+/* Floating "Exit Zen" hint? */
