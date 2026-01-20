@@ -25,14 +25,30 @@ class SideTree {
         this.renderFavorites();
 
         // 1. Quick Access
-        this.renderSection('Quick Access', [
+        const quickAccessItems = [
             { name: 'Desktop', path: this.appState.specialFolders.desktop, icon: '🖥️' },
             { name: 'Documents', path: this.appState.specialFolders.documents, icon: '📄' },
             { name: 'Downloads', path: this.appState.specialFolders.downloads, icon: '⬇️' },
             { name: 'Pictures', path: this.appState.specialFolders.pictures, icon: '🖼️' },
             { name: 'Music', path: this.appState.specialFolders.music, icon: '🎵' },
             { name: 'Videos', path: this.appState.specialFolders.videos, icon: '🎬' }
-        ]);
+        ].filter(item => item.path);
+
+        this.renderSection('Quick Access', quickAccessItems);
+
+        // 1.5 Cloud Storage
+        const cloudItems = [];
+        const sf = this.appState.specialFolders;
+        if (sf.onedrive) cloudItems.push({ name: 'OneDrive', path: sf.onedrive, icon: '☁️' });
+        if (sf.onedriveBusiness) cloudItems.push({ name: 'OneDrive (Business)', path: sf.onedriveBusiness, icon: '🏢' });
+        if (sf.googleDrive) cloudItems.push({ name: 'Google Drive', path: sf.googleDrive, icon: '🔼' });
+        if (sf.dropbox) cloudItems.push({ name: 'Dropbox', path: sf.dropbox, icon: '📦' });
+        if (sf.dropboxPersonal) cloudItems.push({ name: 'Dropbox (Personal)', path: sf.dropboxPersonal, icon: '📦' });
+        if (sf.dropboxBusiness) cloudItems.push({ name: 'Dropbox (Business)', path: sf.dropboxBusiness, icon: '💼' });
+
+        if (cloudItems.length > 0) {
+            this.renderSection('Cloud', cloudItems);
+        }
 
         // 2. Drives (Async)
         this.renderDrives();
@@ -105,6 +121,12 @@ class SideTree {
                 }, 0); // Root level = 0
                 container.appendChild(item);
 
+                // Add Quick Access style context menu for drives
+                item.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    this.showContextMenu(e, 'quick-access-item', { name: drive.label || `Local Disk (${drive.letter})`, path: drive.path, icon: '💾' });
+                });
+
                 // Auto-expand if saved
                 if (this.expandedPaths.has(drive.path)) {
                     this.toggleExpand(drive.path, item);
@@ -129,6 +151,12 @@ class SideTree {
             const item = this.createItemUI(fileData, 0);
             container.appendChild(item);
 
+            // Add context menu for Quick Access items
+            item.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                this.showContextMenu(e, 'quick-access-item', { name: def.name, path: def.path, icon: def.icon });
+            });
+
             if (this.expandedPaths.has(def.path)) {
                 this.toggleExpand(def.path, item);
             }
@@ -141,9 +169,49 @@ class SideTree {
         const div = document.createElement('div');
         div.className = 'st-section';
         div.innerHTML = `
-            <div class="st-section-header">${title}</div>
+            <div class="st-section-header">
+                <span>${escapeHTML(title)}</span>
+                ${title === 'Favorites' ? '<button class="st-add-btn" title="Add Favorite">+</button>' : ''}
+            </div>
             <div class="st-section-content"></div>
         `;
+
+        const header = div.querySelector('.st-section-header');
+        const addBtn = div.querySelector('.st-add-btn');
+
+        if (addBtn) {
+            addBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.openEditFavoritesDialog();
+            });
+        }
+
+        // Favorites Drag to Pin
+        if (title === 'Favorites') {
+            header.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                header.classList.add('drag-over');
+            });
+            header.addEventListener('dragleave', () => header.classList.remove('drag-over'));
+            header.addEventListener('drop', (e) => {
+                e.preventDefault();
+                header.classList.remove('drag-over');
+                try {
+                    const data = JSON.parse(e.dataTransfer.getData('application/json'));
+                    if (data && data.isDirectory) {
+                        this.saveFavorites({
+                            name: data.name,
+                            path: data.path,
+                            icon: '📁'
+                        });
+                        if (window.showNotification) window.showNotification(`Pinned ${data.name} to favorites`);
+                    }
+                } catch (err) {
+                    console.error('Drop pin failed', err);
+                }
+            });
+        }
+
         return div;
     }
 
@@ -170,7 +238,7 @@ class SideTree {
         // Icon
         const icon = document.createElement('div');
         icon.className = 'st-icon';
-        icon.innerHTML = fileData.icon || (fileData.isDirectory ? '📁' : '📄');
+        icon.innerHTML = escapeHTML(fileData.icon || (fileData.isDirectory ? '📁' : '📄'));
 
         // Label
         const label = document.createElement('div');
@@ -193,11 +261,46 @@ class SideTree {
         // Events
         row.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (e.target === arrow || fileData.isDirectory) {
+            if (e.target === arrow || (fileData.isDirectory && e.offsetX < 20)) {
                 this.toggleExpand(fileData.path, wrapper);
             }
             this.handleSelection(fileData.path);
         });
+
+        // Nesting Drag and Drop
+        if (fileData.isDirectory) {
+            row.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                row.classList.add('drag-over');
+            });
+            row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+            row.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                row.classList.remove('drag-over');
+                try {
+                    const rawData = e.dataTransfer.getData('application/json');
+                    if (!rawData) return;
+
+                    const data = JSON.parse(rawData);
+                    if (data && data.path && data.path !== fileData.path) {
+                        const result = await window.electronAPI.moveItems([data.path], fileData.path);
+                        if (result.success) {
+                            if (window.showNotification) window.showNotification(`Moved ${data.name} to ${fileData.name}`);
+                            if (window.refresh) window.refresh();
+                            // Refresh this folder's children if expanded
+                            if (row.classList.contains('expanded')) {
+                                this.toggleExpand(fileData.path, wrapper); // Close
+                                this.toggleExpand(fileData.path, wrapper); // Re-open (async)
+                            }
+                        } else {
+                            if (window.showError) window.showError(`Failed to move: ${result.error}`);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Drop move failed', err);
+                }
+            });
+        }
 
         return wrapper;
     }
@@ -317,6 +420,9 @@ class SideTree {
             this.addMenuItem(menu, 'Edit Favorite', () => this.openEditFavoritesDialog(data));
             this.addMenuSeparator(menu);
             this.addMenuItem(menu, 'Remove', () => this.removeFavorite(data));
+        } else if (type === 'quick-access-item') {
+            this.addMenuItem(menu, 'Open', () => this.handleSelection(data.path));
+            this.addMenuItem(menu, 'Add to Favorites', () => this.saveFavorites(data));
         }
 
         document.body.appendChild(menu);
@@ -366,27 +472,45 @@ class SideTree {
 
         // Populate Grid (Curated Modern Selection)
         const icons = [
-            // Essentials
-            '⭐', '🏠', '❤️', '🔥', '📍', '📌', '🏷️', '🔖',
-            // Tech & Dev
-            '💻', '🖥️', '⌨️', '🖱️', '💾', '💿', '🔌', '🔋',
-            '📡', '📶', '🌐', '☁️', '🔒', '🔑', '🛡️', '⚙️',
-            '🔧', '🔨', '🛠️', '📱', '📸', '🎥', '🎬', '🎧',
-            '🎙️', '🎵', '🎹', '🎮', '🕹️', '👾', '🚀', '🛸',
-            '🤖', '🧬', '🔬', '🔭', '🧪', '🩸', '💊', '🩹',
-            // Office & Files
-            '📂', '📁', '📄', '📃', '📑', '📊', '📈', '📉',
-            '📋', '📅', '📆', '📇', '📦', '📫', '📧', '✉️',
-            '📝', '✏️', '✒️', '📏', '📎', '💼', '💰', '💳',
-            // Objects & Status
-            '💡', '🔦', '🕯️', '💣', '💎', '🏺', '🔮', '🧿',
-            '🎁', '🎈', '🎉', '🏆', '🏅', '🎯', '🎰', '🎲',
-            '🎨', '🎭', '🎪', '🎫', '🕶️', '👓', '👔', '🧢',
-            // Nature & Abstract
-            '🌲', '🌵', '🍀', '🍁', '🍄', '🌍', '🌊', '🔥',
-            '⚡', '🌈', '☀️', '🌙', '🌌', '⚛️', '🕉️', '☮️',
-            '☢️', '☣️', '⚠️', '⛔', '🚫', '✅', '✔️', '❌',
-            '🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚫', '⚪'
+            // Essentials & System
+            '⭐', '🏠', '🔥', '📍', '📌', '🏷️', '🔖', '⚡', '🌈', '☀️', '🌙', '🌌',
+            '❤️', '✨', '💎', '🔑', '🔒', '🔓', '🛡️', '⚙️', '🔧', '🔨', '🛠️', '⛏️',
+            '🟢', '🔵', '🟣', '🔴', '🟡', '🟠', '⚫', '⚪', '🟥', '🟦', '🟧', '🟨',
+
+            // Folders & Data
+            '📂', '📁', '📁', '🗂️', '🗃️', '📦', '📥', '📤', '💾', '💿', '📀', '📼',
+            '📊', '📈', '📉', '📋', '📅', '📆', '📇', '🗃️', '🧮', '🧾', '💰', '💳',
+
+            // Tech & Development
+            '💻', '🖥️', '⌨️', '🖱️', '🕹️', '🎮', '👾', '🚀', '🛸', '🤖', '🧬', '🔬',
+            '🔭', '🧪', '🧪', '🔌', '🔋', '📡', '📶', '🌐', '☁️', '🌍', '🌎', '🌏',
+            '🛰️', '📟', '📠', '📱', '📲', '☎️', '📞', '📟', '🖥️', '💻', '⌚', '⏰',
+
+            // Media & Arts
+            '🎨', '🎭', '🎪', '🎟️', '🎫', '🎬', '🎥', '📸', '📸', '📽️', '📺', '📻',
+            '🎙️', '🎧', '🎵', '🎶', '🎹', '🎸', '🎻', '🎷', '🎺', '🥁', '🎼', '🎭',
+
+            // Office & Productivity
+            '📄', '📃', '📑', '📜', '📖', '📘', '📗', '📙', '📔', '📔', '📓', '📒',
+            '📝', '✏️', '✒️', '🖋️', '🖋️', '🖌️', '🖍️', '📏', '📐', '📎', '🖇️', '✂️',
+
+            // Objects & Symbols
+            '💡', '🔦', '🕯️', '💣', '🏺', '🔮', '🧿', '🎁', '🎈', '🎉', '🎊', '🎋',
+            '🏆', '🏅', '🥇', '🥈', '🥉', '🎯', '🎰', '🎲', '🧩', '🧸', '🪁', '🔮',
+
+            // Nature & Travel
+            '🌲', '🌳', '🌴', '🌵', '🌾', '🌿', '🍀', '🍁', '🍂', '🍃', '🍄', '🐚',
+            '🌍', '🌊', '🌪️', '🌫️', '🌋', '⛺', '🏠', '🏢', '🏣', '🏥', '🏦', '🏨',
+            '🛰️', '🛸', '🛫', '🛬', '🚀', '🚁', '🛶', '⛵', '🛳️', '🚢', '🎡', '🎢',
+
+            // 3D & Immersive
+            '🧊', '🕋', '💠', '🔳', '🔲', '🔮', '🧿', '🧱', '🏗️', '📐', '📏', '🪐',
+            '🌌', '🪁', '🚁', '🚀', '🛸', '🛰️', '🥽', '🕶️', '🎮', '🕹️', '👾', '🧩',
+            '🎇', '🎆', '✨', '⚡', '🌀', '⚛️', '🪐', '💫', '☄️', '🌑', '🌕', '🌔',
+
+            // Branding & Misc
+            '🅰️', '🅱️', '🅾️', '🆎', '🆑', '🆒', '🆓', '🆔', '🆕', '🆖', '🆗', '🆘',
+            '🆙', '🆚', '🈁', '🈂️', '🈚', '🈯', '🈲', '🉐', '🈹', '🈺', '🈶', '🈯'
         ];
 
         iconGrid.innerHTML = '';
@@ -450,20 +574,23 @@ class SideTree {
 
         if (oldFav) {
             // Edit: Find and replace
-            const idx = favorites.findIndex(f => f.path === oldFav.path && f.name === oldFav.name);
+            const idx = favorites.findIndex(f => f.path === oldFav.path);
             if (idx !== -1) favorites[idx] = newFav;
         } else {
-            // Add
-            favorites.push(newFav);
+            // Add: Check for duplicate path first
+            const existing = favorites.find(f => f.path === newFav.path);
+            if (!existing) {
+                favorites.push(newFav);
+                console.log('Added to favorites:', newFav.path);
+            } else {
+                console.warn('Item already in favorites:', newFav.path);
+                if (window.showNotification) window.showNotification('Already in favorites');
+                return; // Don't add if already there
+            }
         }
 
+        console.log('Saving favorites. Total count:', favorites.length);
         localStorage.setItem('sidetree_favorites', JSON.stringify(favorites));
-        // Re-render only favorites section? Or init whole tree? 
-        // Init whole tree is safer to allow favorites to re-sort or just call renderFavorites if I clear it first.
-        // Let's just clear Favorites section and re-render it.
-        // But wait, renderFavorites appends to root. I need a way to replace just that section.
-        // For simplicity, reload window or re-init logic.
-        // Actually, re-calling init() clears root.
         this.init();
     }
 

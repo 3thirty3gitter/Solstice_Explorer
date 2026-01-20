@@ -124,7 +124,7 @@ class QuickLook {
         try {
             await this.renderContent(item);
         } catch (e) {
-            this.contentArea.innerHTML = `<div class="ql-error"><span>⚠️ Unable to preview</span><span style="font-size:11px">${e.message}</span></div>`;
+            this.contentArea.innerHTML = `<div class="ql-error"><span>⚠️ Unable to preview</span><span style="font-size:11px">${escapeHTML(e.message)}</span></div>`;
         }
     }
 
@@ -144,7 +144,7 @@ class QuickLook {
                 <div style="text-align:center; color: #aaa;">
                     <div style="font-size: 64px; margin-bottom: 20px;">📂</div>
                     <div>Folder Preview Not Supported Yet</div>
-                    <div style="font-size: 12px; margin-top: 10px; opacity: 0.6;">${item.path}</div>
+                    <div style="font-size: 12px; margin-top: 10px; opacity: 0.6;">${escapeHTML(item.path)}</div>
                 </div>
             `;
             return;
@@ -206,7 +206,7 @@ class QuickLook {
                 <div style="text-align:center; color: #aaa;">
                     <div style="font-size: 64px; margin-bottom: 20px;">📄</div>
                     <div>Preview not available</div>
-                    <div style="font-size: 12px; margin-top: 10px; opacity: 0.6;">.${ext} files</div>
+                    <div style="font-size: 12px; margin-top: 10px; opacity: 0.6;">.${escapeHTML(ext)} files</div>
                 </div>
             `;
         }

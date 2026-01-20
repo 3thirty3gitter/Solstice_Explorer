@@ -116,39 +116,10 @@ class ThemeManager {
     }
 
     createSettingsUI() {
-        // We'll inject the modal if it doesn't exist
-        if (!document.getElementById('settingsModal')) {
-            const modal = document.createElement('div');
-            modal.id = 'settingsModal';
-            modal.className = 'modal-overlay hidden';
-
-            modal.innerHTML = `
-                <div class="modal-content settings-modal" style="width: 500px; max-width: 90vw;">
-                    <div class="modal-header">
-                        <h2>Settings</h2>
-                        <button class="close-modal" id="closeSettingsBtn">×</button>
-                    </div>
-                    <div class="modal-body">
-                        <section class="settings-section">
-                            <h3>Theme</h3>
-                            <div class="theme-grid" id="themeGrid">
-                                ${this.generateThemeButtons()}
-                            </div>
-                        </section>
-                        <!-- Future sections: Fonts, Terminal, etc. -->
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(modal);
-
-            // Events
-            modal.querySelector('#closeSettingsBtn').addEventListener('click', () => this.hideSettings());
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) this.hideSettings();
-            });
-
-            // Bind Theme Buttons
+        // Populate the theme grid in the existing Settings modal
+        const themeGrid = document.getElementById('themeGrid');
+        if (themeGrid) {
+            themeGrid.innerHTML = this.generateThemeButtons();
             this.bindThemeButtons();
         }
     }
@@ -159,7 +130,7 @@ class ThemeManager {
                 <div class="theme-preview" style="background: ${theme.colors['--app-bg']}">
                     <div class="theme-glass-preview" style="background: ${theme.colors['--glass-bg']}; border-color: ${theme.colors['--accent-primary']}"></div>
                 </div>
-                <span>${theme.name}</span>
+                <span>${escapeHTML(theme.name)}</span>
             </div>
         `).join('');
     }
@@ -170,20 +141,6 @@ class ThemeManager {
                 this.applyTheme(btn.dataset.theme);
             });
         });
-    }
-
-    showSettings() {
-        const modal = document.getElementById('settingsModal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            // Re-render buttons active state
-            this.updateUISelection();
-        }
-    }
-
-    hideSettings() {
-        const modal = document.getElementById('settingsModal');
-        if (modal) modal.classList.add('hidden');
     }
 }
 

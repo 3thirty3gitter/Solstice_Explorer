@@ -125,12 +125,12 @@ class Commander {
             const el = document.createElement('div');
             el.className = `cmd-item ${index === this.selectedIndex ? 'selected' : ''}`;
             el.innerHTML = `
-                <span class="cmd-icon">${cmd.icon}</span>
+                <span class="cmd-icon">${escapeHTML(cmd.icon)}</span>
                 <div class="cmd-content">
-                    <span class="cmd-title">${cmd.title}</span>
-                    <span class="cmd-desc">${cmd.desc}</span>
+                    <span class="cmd-title">${escapeHTML(cmd.title)}</span>
+                    <span class="cmd-desc">${escapeHTML(cmd.desc)}</span>
                 </div>
-                ${cmd.shortcut ? `<span class="cmd-shortcut">${cmd.shortcut}</span>` : ''}
+                ${cmd.shortcut ? `<span class="cmd-shortcut">${escapeHTML(cmd.shortcut)}</span>` : ''}
             `;
 
             el.addEventListener('click', () => {

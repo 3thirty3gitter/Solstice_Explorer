@@ -137,7 +137,7 @@ class TabManager {
         el.dataset.tabId = tab.id;
         el.innerHTML = `
             <span class="tab-icon">📁</span>
-            <span class="tab-title">${tab.name}</span>
+            <span class="tab-title">${escapeHTML(tab.name)}</span>
             <span class="tab-close">×</span>
         `;
 

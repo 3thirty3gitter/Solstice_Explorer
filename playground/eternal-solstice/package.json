@@ -24,6 +24,9 @@
   "build": {
     "appId": "com.eternalsolstice.explorer",
     "productName": "Eternal Solstice Explorer",
+    "copyright": "Copyright © 2026 Eternal Solstice",
+    "compression": "maximum",
+    "asar": true,
     "win": {
       "target": [
         "nsis"

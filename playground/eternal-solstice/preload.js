@@ -25,6 +25,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     copyItems: (sources, destination) => ipcRenderer.invoke('copy-items', { sources, destination }),
     moveItems: (sources, destination) => ipcRenderer.invoke('move-items', { sources, destination }),
     renameItem: (oldPath, newName) => ipcRenderer.invoke('rename-item', { oldPath, newName }),
+    batchRename: (operations) => ipcRenderer.invoke('batch-rename', operations),
     createFolder: (parentPath, folderName) => ipcRenderer.invoke('create-folder', { parentPath, folderName }),
     createFile: (parentPath, fileName) => ipcRenderer.invoke('create-file', { parentPath, fileName }),
     readFileContent: (path) => ipcRenderer.invoke('read-file-content', path),
@@ -44,5 +45,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     logToMain: (message) => ipcRenderer.send('log-message', message),
 
     // Drag & Drop
-    startDrag: (filePath) => ipcRenderer.send('start-drag', filePath)
+    startDrag: (filePath) => ipcRenderer.send('start-drag', filePath),
+
+    // System Registration
+    setDefaultExplorer: () => ipcRenderer.invoke('set-default-explorer'),
+    unsetDefaultExplorer: () => ipcRenderer.invoke('unset-default-explorer'),
+    checkIsDefaultExplorer: () => ipcRenderer.invoke('check-default-explorer'),
+    onNavigateTo: (callback) => ipcRenderer.on('navigate-to', (event, path) => callback(path))
 });

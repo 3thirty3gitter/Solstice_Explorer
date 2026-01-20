@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eternal Solstice - File Explorer</title>
     <meta name="description"
@@ -100,13 +102,6 @@
                         <circle cx="12" cy="12" r="4"></circle>
                     </svg>
                 </button>
-                <button class="view-btn" id="settingsBtn" title="Settings" aria-label="Settings">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path
-                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-                        </path>
-                    </svg>
                 </button>
             </div>
         </div>
@@ -180,6 +175,19 @@
 
         <!-- Toolbar -->
         <div class="toolbar">
+            <button class="toolbar-btn" id="undoBtn" title="Undo (Ctrl+Z)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+            </button>
+            <button class="toolbar-btn" id="redoBtn" title="Redo (Ctrl+Y)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+            </button>
+            <div class="toolbar-separator"></div>
             <button class="toolbar-btn" id="newFolderBtn" title="New Folder">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
@@ -226,6 +234,17 @@
                 </svg>
                 <span>Delete</span>
             </button>
+            <button class="toolbar-btn" id="batchRenameBtn" title="Batch Rename" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                <span>Batch Rename</span>
+            </button>
             <div class="toolbar-separator"></div>
             <button class="toolbar-btn" id="previewBtn" title="Toggle Preview">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -241,6 +260,16 @@
                     <line x1="12" y1="3" x2="12" y2="21"></line>
                 </svg>
                 <span>Split</span>
+            </button>
+            <div class="toolbar-separator"></div>
+            <button class="toolbar-btn" id="settingsBtn" title="Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+                <span>Settings</span>
             </button>
         </div>
 
@@ -265,6 +294,15 @@
                             <option value="date">Date Modified</option>
                             <option value="size">Size</option>
                             <option value="type">Type</option>
+                        </select>
+                    </div>
+                    <div class="group-controls" style="margin-left: 12px;">
+                        <label for="groupBy">Group by:</label>
+                        <select id="groupBy" aria-label="Group by">
+                            <option value="none">None</option>
+                            <option value="type">Type</option>
+                            <option value="date">Date Modified</option>
+                            <option value="size">Size</option>
                         </select>
                     </div>
                 </div>
@@ -404,6 +442,9 @@
             <span>Open</span>
             <span class="shortcut">Enter</span>
         </div>
+        <div class="context-item" data-action="pin">
+            <span>Pin to Sidebar</span>
+        </div>
         <div class="context-divider"></div>
         <div class="context-item" data-action="copy">
             <span>Copy</span>
@@ -421,6 +462,10 @@
         <div class="context-item" data-action="rename">
             <span>Rename</span>
             <span class="shortcut">F2</span>
+        </div>
+        <div class="context-item" data-action="batch-rename">
+            <span>Batch Rename...</span>
+            <span class="shortcut">Ctrl+Shift+R</span>
         </div>
         <div class="context-item" data-action="delete">
             <span>Delete</span>
@@ -507,8 +552,115 @@
         </div>
     </div>
 
+    <!-- Batch Rename Dialog -->
+    <div class="modal-overlay hidden" id="batchRenameDialog">
+        <div class="modal-dialog batch-rename-dialog">
+            <div class="modal-header">
+                <h2>Batch Rename</h2>
+                <span class="file-count" id="batchRenameCount">0 files selected</span>
+                <button class="modal-close" onclick="closeBatchRename()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Rename Mode Selector -->
+                <div class="form-group">
+                    <label>Rename Mode:</label>
+                    <select id="renameMode" class="form-select">
+                        <option value="find-replace">Find and Replace</option>
+                        <option value="numbering">Numbering</option>
+                        <option value="case">Case Transformation</option>
+                        <option value="prefix-suffix">Add Prefix/Suffix</option>
+                        <option value="remove">Remove Text</option>
+                        <option value="template">Custom Template</option>
+                    </select>
+                </div>
+
+                <!-- Mode Options Container (dynamic content) -->
+                <div id="modeOptionsContainer" class="mode-options">
+                    <!-- Content changes based on selected mode -->
+                </div>
+
+                <!-- Live Preview Table -->
+                <div class="preview-section">
+                    <h3>Preview:</h3>
+                    <div class="preview-table-container">
+                        <table class="preview-table">
+                            <thead>
+                                <tr>
+                                    <th>Original Name</th>
+                                    <th></th>
+                                    <th>New Name</th>
+                                </tr>
+                            </thead>
+                            <tbody id="previewTableBody">
+                                <!-- Rows added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="rename-status" id="renameStatus">
+                    <span id="conflictCount">0 conflicts</span>,
+                    <span id="warningCount">0 warnings</span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeBatchRename()">Cancel</button>
+                <button class="btn btn-primary" id="applyBatchRename" onclick="applyBatchRename()">
+                    Apply (<span id="applyCount">0</span> files)
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="custom-tooltip"></div>
 
+    <!-- Settings Dialog -->
+    <div class="modal-overlay hidden" id="settingsDialog">
+        <div class="modal-dialog small">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" id="closeSettings">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <h3>Appearance</h3>
+                    <div class="setting-item" style="display: block;">
+                        <div class="setting-info" style="margin-bottom: 12px;">
+                            <span class="setting-title">Theme</span>
+                            <span class="setting-description">Choose your preferred color theme</span>
+                        </div>
+                        <div class="theme-grid" id="themeGrid">
+                            <!-- Populated by ThemeManager -->
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3>System</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-title">Default File Explorer</span>
+                            <span class="setting-description">Use Eternal Solstice as the default folder browser in
+                                Windows</span>
+                        </div>
+                        <div class="setting-action">
+                            <label class="switch">
+                                <input type="checkbox" id="defaultExplorerToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="closeSettingsBtn">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/Utils.js"></script>
     <script src="js/TabManager.js"></script>
     <script src="js/FileTree.js"></script>
     <script src="js/SideTree.js"></script>

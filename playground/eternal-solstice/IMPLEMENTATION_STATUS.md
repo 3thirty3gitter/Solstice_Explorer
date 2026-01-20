@@ -50,6 +50,7 @@
    - ✅ New Folder button → show dialog
    - ✅ Copy/Cut/Paste/Delete actions
    - ✅ Preview toggle
+   - ✅ Batch Rename button
 
 3. **Clipboard Management**
    - ✅ Track clipboard state
@@ -58,23 +59,37 @@
 4. **Dialogs**
    - ✅ Rename dialog
    - ✅ New folder dialog
+   - ✅ Batch Rename dialog (Advanced)
 
 5. **Tabs System**
    - ✅ Multi-tab browsing
    - ✅ State persistence per tab
    - ✅ Integrated into UI
 
+6. **Selection & Navigation**
+   - ✅ Multi-select (Ctrl+Click)
+   - ✅ Range select (Shift+Click)
+   - ✅ Arrow key navigation
+   - ✅ Enter to open, Backspace for Up
+   - ✅ Editable address bar
+
+7. **View Modes**
+   - ✅ Grid View
+   - ✅ List View
+   - ✅ Details View (Columns)
+   - ✅ Column sorting
+
 ## 🔄 IN PROGRESS - New Features
 
 
 ## Next Steps
 
-1. Update app.js with all new functionality
-2. Test all features
-3. Fix any bugs
-4. Add drag & drop support
-5. Optimize performance
-6. Add more file type previews
+1. **Undo/Redo System** - Implement undo for file operations
+2. **"Group By" Functionality** - Group files by type, date, size
+3. **Integrated Terminal** - Add a terminal pane at the bottom
+4. **Resizer Improvements** - Smoother resizing for sidebar and preview pan
+5. **Drag & Drop Polish** - Visual ghosting and drag feedback
+6. **Git Integration** - Show git status icons
 
 ## API Reference
 
